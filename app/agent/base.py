@@ -133,6 +133,17 @@ class BaseAgent(BaseModel, ABC):
 
         results: List[str] = []
         async with self.state_context(AgentState.RUNNING):
+            # Check if long-term memory summary exists and add it to the system prompt
+            if self.memory.long_term_memory_summary:
+                summary_message = Message.system_message(
+                    f"Previous conversation summary: {self.memory.long_term_memory_summary}"
+                )
+                # Insert the summary message right after the main system prompt
+                if self.messages and self.messages[0].role == "system":
+                    self.messages.insert(1, summary_message)
+                else:
+                    self.messages.insert(0, summary_message)
+
             while (
                 self.current_step < self.max_steps and self.state != AgentState.FINISHED
             ):

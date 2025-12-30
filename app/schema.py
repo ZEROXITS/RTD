@@ -159,12 +159,18 @@ class Message(BaseModel):
 class Memory(BaseModel):
     messages: List[Message] = Field(default_factory=list)
     max_messages: int = Field(default=100)
+    long_term_memory_summary: Optional[str] = Field(
+        None, description="A summary of the long-term conversation history"
+    )
 
     def add_message(self, message: Message) -> None:
         """Add a message to memory"""
         self.messages.append(message)
         # Optional: Implement message limit
         if len(self.messages) > self.max_messages:
+            # Instead of simple truncation, we will rely on a separate process
+            # to generate a summary and then truncate.
+            # For now, we keep the simple truncation for compatibility.
             self.messages = self.messages[-self.max_messages :]
 
     def add_messages(self, messages: List[Message]) -> None:
@@ -172,11 +178,15 @@ class Memory(BaseModel):
         self.messages.extend(messages)
         # Optional: Implement message limit
         if len(self.messages) > self.max_messages:
+            # Instead of simple truncation, we will rely on a separate process
+            # to generate a summary and then truncate.
+            # For now, we keep the simple truncation for compatibility.
             self.messages = self.messages[-self.max_messages :]
 
     def clear(self) -> None:
         """Clear all messages"""
         self.messages.clear()
+        self.long_term_memory_summary = None
 
     def get_recent_messages(self, n: int) -> List[Message]:
         """Get n most recent messages"""

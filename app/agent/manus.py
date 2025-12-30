@@ -137,11 +137,55 @@ class Manus(ToolCallAgent):
             await self.disconnect_mcp_server()
             self._initialized = False
 
+    async def generate_summary_if_needed(self) -> None:
+        """Generate a long-term memory summary if the message limit is about to be reached."""
+        if len(self.memory.messages) >= self.memory.max_messages * 0.8:
+            logger.info("Memory limit approaching. Generating long-term summary.")
+            # Get all messages except the system prompt (which is usually the first one)
+            messages_to_summarize = self.memory.messages[1:]
+            
+            # Simple prompt for summarization
+            summary_prompt = (
+                "Summarize the following conversation history into a concise, "
+                "single-paragraph summary that captures the main goal, key decisions, "
+                "and important context for the agent to continue the task. "
+                "The summary should be no more than 500 words."
+            )
+            
+            # Prepare messages for LLM call
+            llm_messages = [Message.system_message(summary_prompt)] + messages_to_summarize
+            
+            try:
+                # Use a dedicated, cheaper model for summarization if available, otherwise use default
+                summary_llm = self.llm
+                
+                response = await summary_llm.chat_completion(
+                    messages=llm_messages,
+                    model=summary_llm.model, # Use default model for now
+                    temperature=0.0,
+                    max_tokens=500,
+                )
+                
+                summary_text = response.choices[0].message.content
+                if summary_text:
+                    self.memory.long_term_memory_summary = summary_text
+                    logger.info("Long-term memory summary generated successfully.")
+                    
+                    # Clear old messages after summarization, keeping only the system message and the new summary
+                    self.memory.messages = self.memory.messages[:1] + [Message.system_message(f"Previous conversation summary: {summary_text}")]
+                    logger.info("Old messages cleared from short-term memory.")
+                    
+            except Exception as e:
+                logger.error(f"Failed to generate long-term memory summary: {e}")
+
     async def think(self) -> bool:
         """Process current state and decide next actions with appropriate context."""
         if not self._initialized:
             await self.initialize_mcp_servers()
             self._initialized = True
+
+        # New: Check and generate long-term memory summary before thinking
+        await self.generate_summary_if_needed()
 
         original_prompt = self.next_step_prompt
         recent_messages = self.memory.messages[-3:] if self.memory.messages else []
