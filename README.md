@@ -11,15 +11,15 @@ English | [العربية](README_ar.md) | [中文](README_zh.md) | [한국어](
 [![Demo](https://img.shields.io/badge/Demo-Hugging%20Face-yellow)](https://huggingface.co/spaces/lyh-917/OpenManusDemo)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15186407.svg)](https://doi.org/10.5281/zenodo.15186407)
 
-# 👋 OpenManus
+# 👋 RTD: The Future of General AI Agents
 
-Manus is incredible, but OpenManus can achieve any idea without an *Invite Code* 🛫!
+RTD is a powerful, open-source general AI agent framework designed to be competitive, customizable, and efficient. Built on the foundations of OpenManus, RTD aims to push the boundaries of what AI agents can achieve.
 
 Our team members [@Xinbin Liang](https://github.com/mannaandpoem) and [@Jinyu Xiang](https://github.com/XiangJinyu) (core authors), along with [@Zhaoyang Yu](https://github.com/MoshiQAQ), [@Jiayi Zhang](https://github.com/didiforgithub), and [@Sirui Hong](https://github.com/stellaHSR), we are from [@MetaGPT](https://github.com/geekan/MetaGPT). The prototype is launched within 3 hours and we are keeping building!
 
 It's a simple implementation, so we welcome any suggestions, contributions, and feedback!
 
-Enjoy your own agent with OpenManus!
+Enjoy your own agent with RTD!
 
 We're also excited to introduce [OpenManus-RL](https://github.com/OpenManus/OpenManus-RL), an open-source project dedicated to reinforcement learning (RL)- based (such as GRPO) tuning methods for LLM agents, developed collaboratively by researchers from UIUC and OpenManus.
 
@@ -90,7 +90,7 @@ playwright install
 
 ## Configuration
 
-OpenManus requires configuration for the LLM APIs it uses. Follow these steps to set up your configuration:
+RTD requires configuration for the LLM APIs it uses. Follow these steps to set up your configuration:
 
 1. Create a `config.toml` file in the `config` directory (you can copy from the example):
 
@@ -118,7 +118,7 @@ api_key = "sk-..."  # Replace with your actual API key
 
 ## Quick Start
 
-One line for run OpenManus:
+One line to run RTD:
 
 ```bash
 python main.py
