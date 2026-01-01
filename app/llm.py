@@ -222,7 +222,8 @@ class LLM:
             elif self.api_type == "aws":
                 self.client = BedrockClient()
             else:
-                self.client = AsyncOpenAI(api_key=self.api_key, base_url=self.base_url)
+                from openai import OpenAI
+                self.client = AsyncOpenAI() # Use default Manus client configuration
 
             self.token_counter = TokenCounter(self.tokenizer)
 
