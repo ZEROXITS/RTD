@@ -16,6 +16,7 @@ from app.tool.search import (
     GoogleSearchEngine,
     WebSearchEngine,
 )
+from app.tool.search.tavily_search import TavilySearchEngine
 from app.tool.search.base import SearchItem
 
 
@@ -195,6 +196,7 @@ class WebSearch(BaseTool):
         "baidu": BaiduSearchEngine(),
         "duckduckgo": DuckDuckGoSearchEngine(),
         "bing": BingSearchEngine(),
+        "tavily": TavilySearchEngine(),
     }
     content_fetcher: WebContentFetcher = WebContentFetcher()
 

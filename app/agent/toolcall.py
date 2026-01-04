@@ -197,14 +197,30 @@ class ToolCallAgent(ReActAgent):
 
             return observation
         except json.JSONDecodeError:
-            error_msg = f"Error parsing arguments for {name}: Invalid JSON format"
+            error_msg = f"Error parsing arguments for {name}: Invalid JSON format. Arguments provided: {command.function.arguments}"
             logger.error(
                 f"📝 Oops! The arguments for '{name}' don't make sense - invalid JSON, arguments:{command.function.arguments}"
+            )
+            # Self-correction mechanism: Add a message to memory to inform the LLM about the error
+            self.memory.add_message(
+                Message.tool_message(
+                    content=f"Error: {error_msg}. Please correct the JSON arguments and try again.",
+                    tool_call_id=command.id,
+                    name=command.function.name,
+                )
             )
             return f"Error: {error_msg}"
         except Exception as e:
             error_msg = f"⚠️ Tool '{name}' encountered a problem: {str(e)}"
             logger.exception(error_msg)
+            # Self-correction mechanism: Add a message to memory to inform the LLM about the error
+            self.memory.add_message(
+                Message.tool_message(
+                    content=f"Error: {error_msg}. Please re-evaluate your plan and try a different approach or tool.",
+                    tool_call_id=command.id,
+                    name=command.function.name,
+                )
+            )
             return f"Error: {error_msg}"
 
     async def _handle_special_tool(self, name: str, result: Any, **kwargs):
